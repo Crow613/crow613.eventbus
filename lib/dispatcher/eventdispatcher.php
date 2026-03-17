@@ -2,16 +2,17 @@
 
 namespace Crow613\EventBus\Dispatcher;
 
-use Crow613\EventBus\Event\RegisterEvents;
-use Crow613\EventBus\Register\EventRegister;
+use Bitrix\Main\EventManager;
+use Crow613\EventBus\Events\EventsManager;
 
- final class EventDispatcher extends EventRegister
+class EventDispatcher
 {
-     /**
-      * @param RegisterEvents $event
-      * @return void
-      */
-     public static function dispatch(\Crow613\EventBus\Event\RegisterEvents $event): void
+
+    /**
+     * @param EventsManager $event
+     * @return void
+     */
+    public static function dispatch(EventsManager $event): void
     {
         self::init(
             $event->moduleId,
@@ -19,6 +20,27 @@ use Crow613\EventBus\Register\EventRegister;
             $event->class,
             $event->handler
         );
+    }
+
+    /**
+     * @param string $moduleId
+     * @param string $eventName
+     * @param string $class
+     * @param string $handler
+     * @return void
+     */
+    private static function init(
+        string $moduleId,
+        string $eventName,
+        string $class,
+        string $handler): void
+    {
+        EventManager::getInstance()
+            ->addEventHandler(
+                $moduleId,
+                $eventName,
+                [$class, $handler]
+            );
     }
 
 }
